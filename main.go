@@ -1,8 +1,8 @@
 package main
 
-import "github.com/deenrookie/kunpeng-plus/inherit"
+import "github.com/deenrookie/kunpeng-plus/pocs"
 
 func main(){
-	inherit.A()
+	pocs.A()
 }
 
