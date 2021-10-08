@@ -1,8 +1,12 @@
 package main
 
-import "github.com/deenrookie/kunpeng-plus/pocs"
+import (
+	"fmt"
+	"github.com/deenrookie/kunpeng-plus/pocs"
+	_ "github.com/deenrookie/kunpeng-plus/pocs/go"
+)
 
 func main(){
-	pocs.A()
+	fmt.Println(pocs.GoPlugins)
 }
 

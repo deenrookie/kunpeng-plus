@@ -44,4 +44,6 @@ func Regist(target string, plugin GoPlugin) {
 	// util.Logger.Println("init plugin:", pluginInfo.References.KPID, pluginInfo.Name)
 }
 
-
+func init(){
+	GoPlugins = make(map[string][]GoPlugin)
+}
