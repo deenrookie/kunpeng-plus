@@ -11,8 +11,8 @@ import (
 
 var DB *gorm.DB
 
-func init() {
-	Database("")
+func Init(dbConfString string) {
+	Database(dbConfString)
 }
 
 func Database(conn string) {
@@ -45,5 +45,3 @@ func Database(conn string) {
 		}
 	}
 }
-
-

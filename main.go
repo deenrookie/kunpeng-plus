@@ -1,12 +1,11 @@
 package main
 
 import (
-	"fmt"
-	"github.com/deenrookie/kunpeng-plus/pocs"
-	_ "github.com/deenrookie/kunpeng-plus/pocs/go"
+	"github.com/deenrookie/kunpeng-plus/db"
 )
 
 func main(){
-	fmt.Println(pocs.GoPlugins)
+	db.Init("")
+	db.SyncToDB()
 }
 
