@@ -1,7 +1,15 @@
 package pocs
 
+import (
+	"fmt"
+	"github.com/deenrookie/kunpeng-plus/utils"
+)
+
 // GoPlugins GO插件集
 var GoPlugins map[string][]GoPlugin
+
+// 以hash为key的poc集合
+var GoPocs map[string]GoPlugin
 
 //References 插件附加信息
 type References struct {
@@ -40,10 +48,11 @@ type TaskMeta struct {
 // Regist 注册插件
 func Regist(target string, plugin GoPlugin) {
 	GoPlugins[target] = append(GoPlugins[target], plugin)
-	// var pluginInfo = plugin.Init()
-	// util.Logger.Println("init plugin:", pluginInfo.References.KPID, pluginInfo.Name)
+	newPoc := plugin.Init()
+	GoPocs[utils.Md5(fmt.Sprintf(newPoc.Name, newPoc.Remarks, newPoc.Author, newPoc.References.CVE, newPoc.References.URL))] = plugin
 }
 
 func init(){
 	GoPlugins = make(map[string][]GoPlugin)
+	GoPocs = make(map[string]GoPlugin)
 }
