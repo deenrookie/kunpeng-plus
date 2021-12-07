@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/deenrookie/kunpeng-plus/pocs"
 	_ "github.com/deenrookie/kunpeng-plus/pocs/go"
+	_ "github.com/deenrookie/kunpeng-plus/pocs/mypocs"
 	"github.com/deenrookie/kunpeng-plus/utils"
 )
 
