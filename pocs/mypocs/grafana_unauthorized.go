@@ -66,7 +66,7 @@ func (d *grafanaUnauthorized) Check(URL string, meta plugin.TaskMeta) bool {
 		if err != nil {
 			continue
 		}
-		if strings.Contains(resp.ResponseRaw, "root") {
+		if strings.Contains(resp.ResponseRaw, "root:x:0:0:root:") {
 			result := d.info
 			result.Response = resp.ResponseRaw
 			result.Request = resp.RequestRaw
