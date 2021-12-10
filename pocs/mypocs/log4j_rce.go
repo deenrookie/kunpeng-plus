@@ -72,8 +72,10 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	time.Sleep(time.Duration(1) * time.Second)
 
 	if utils.IsExistDNSLog(randStr) {
-		//result := d.info
-		//d.result = append(d.result, result)
+		result := d.info
+		result.Response = "TEST"
+		result.Request = "TEST"
+		d.result = append(d.result, result)
 		return true
 	}
 	return false
