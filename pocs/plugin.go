@@ -52,7 +52,7 @@ func Regist(target string, plugin GoPlugin) {
 	GoPocs[utils.Md5(fmt.Sprintf(newPoc.Name, newPoc.Remarks, newPoc.Author, newPoc.References.CVE, newPoc.References.URL))] = plugin
 }
 
-func init(){
+func init() {
 	GoPlugins = make(map[string][]GoPlugin)
 	GoPocs = make(map[string]GoPlugin)
 }

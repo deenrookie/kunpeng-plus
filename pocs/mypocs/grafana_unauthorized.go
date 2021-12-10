@@ -16,6 +16,7 @@ type grafanaUnauthorized struct {
 func init() {
 	plugin.Regist("grafana", &grafanaUnauthorized{})
 }
+
 func (d *grafanaUnauthorized) Init() plugin.Plugin {
 	d.info = plugin.Plugin{
 		Name:    "Grafana 未授权任意文件读取",
