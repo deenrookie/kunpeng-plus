@@ -60,10 +60,13 @@ func IsExistDNSLog(logStr string) bool {
 	req.Header.Set("token", DNS_AUTH_TOKEN)
 
 	client := &http.Client{}
-	resp, _ := client.Do(req)
+	resp, err := client.Do(req)
+
 
 	defer func() {
-		_ = resp.Body.Close()
+		if resp != nil {
+			_ = resp.Body.Close()
+		}
 	}()
 
 	body, _ := ioutil.ReadAll(resp.Body)
