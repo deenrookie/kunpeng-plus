@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 )
@@ -43,14 +44,14 @@ func Md5(str string) string {
 }
 
 func IsExistDNSLog(logStr string) bool {
-	url := "http://" + DNS_WEB_ADDRESS + "/api/verifyDns"
+	targeUrl := "http://" + DNS_WEB_ADDRESS + "/api/verifyDns"
 
 	//json序列化
 	post := "{\"Query\":\"" + logStr + "." + DNS_LOG_DOMAIN + "\"}"
 
 	var jsonStr = []byte(post)
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	req, err := http.NewRequest("POST", targeUrl, bytes.NewBuffer(jsonStr))
 
 	if err != nil {
 		return false
@@ -61,7 +62,6 @@ func IsExistDNSLog(logStr string) bool {
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
-
 
 	defer func() {
 		if resp != nil {
@@ -79,4 +79,13 @@ func IsExistDNSLog(logStr string) bool {
 	} else {
 		return false
 	}
+}
+
+// 获取host
+func GetHostFromUrl(targetUrl string) string {
+	u, err := url.Parse(targetUrl)
+	if err != nil {
+		return ""
+	}
+	return u.Host
 }
