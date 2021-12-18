@@ -87,5 +87,5 @@ func GetHostFromUrl(targetUrl string) string {
 	if err != nil {
 		return ""
 	}
-	return u.Host
+	return u.Hostname()
 }

