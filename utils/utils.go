@@ -69,6 +69,10 @@ func IsExistDNSLog(logStr string) bool {
 		}
 	}()
 
+	if resp.Body == nil {
+		return false
+	}
+
 	body, _ := ioutil.ReadAll(resp.Body)
 	//fmt.Println("response Status:", resp.Status)
 	//fmt.Println("response Headers:", resp.Header)
