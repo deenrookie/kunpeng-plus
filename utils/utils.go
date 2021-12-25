@@ -69,7 +69,7 @@ func IsExistDNSLog(logStr string) bool {
 		}
 	}()
 
-	if resp.Body == nil {
+	if resp == nil || resp.Body == nil {
 		return false
 	}
 
