@@ -56,7 +56,7 @@ func (d *springShell) Check(URL string, meta plugin.TaskMeta) bool {
 			}
 		}
 
-		if resp.Other.StatusCode == 500 {
+		if resp.Other.StatusCode == 500 || resp.Other.StatusCode == 400 {
 			result := d.info
 			result.Response = "TEST"
 			result.Request = "TEST"
