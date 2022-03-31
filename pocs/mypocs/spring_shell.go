@@ -57,11 +57,17 @@ func (d *springShell) Check(URL string, meta plugin.TaskMeta) bool {
 		}
 
 		if resp.Other.StatusCode == 500 || resp.Other.StatusCode == 400 {
-			result := d.info
-			result.Response = "TEST"
-			result.Request = "TEST"
-			d.result = append(d.result, result)
-			return true
+			if strings.Contains(string(resp.Body), "400 No required SSL certificate") {
+				return false
+			}
+
+			if strings.Contains(string(resp.Body), "springframework") || strings.Contains(string(resp.Body), "full stack") {
+				result := d.info
+				result.Response = "TEST"
+				result.Request = "TEST"
+				d.result = append(d.result, result)
+				return true
+			}
 		}
 	} else if err != nil {
 	}
