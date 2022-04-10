@@ -51,6 +51,10 @@ func (d *springCloudGateWayRCE) Check(URL string, meta plugin.TaskMeta) bool {
 	if &resp != nil && err == nil {
 		if resp.Other != nil {
 			if resp.Other.StatusCode == 200 {
+				result := d.info
+				result.Response = string(resp.Body)
+				result.Request = "TEST"
+				d.result = append(d.result, result)
 				return true
 			}
 		}

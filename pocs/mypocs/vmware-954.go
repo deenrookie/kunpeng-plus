@@ -52,6 +52,10 @@ func (d *vmware954RCE) Check(URL string, meta plugin.TaskMeta) bool {
 	if &resp != nil && err == nil {
 		if resp.Other != nil {
 			if strings.Contains(string(resp.Body), "server.unexpected.error") {
+				result := d.info
+				result.Response = string(resp.Body)
+				result.Request = "TEST"
+				d.result = append(d.result, result)
 				return true
 			}
 		}
