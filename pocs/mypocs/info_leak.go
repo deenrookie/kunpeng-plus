@@ -55,6 +55,11 @@ var reqs = []reqAndResp{
 		ReqPaths: []string{"/debug/pprof"},
 		Resp:     "Types of profiles available",
 	},
+	{
+		Name:     "file_read",
+		ReqPaths: []string{"/js/..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//etc/passwd", "/images/..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//etc/passwd"},
+		Resp:     "root:x:0",
+	},
 }
 
 func (d *infoLeak) Check(URL string, meta plugin.TaskMeta) bool {
