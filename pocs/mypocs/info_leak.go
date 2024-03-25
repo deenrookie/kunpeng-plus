@@ -60,6 +60,11 @@ var reqs = []reqAndResp{
 		ReqPaths: []string{"/js/..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//etc/passwd", "/images/..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//..//etc/passwd"},
 		Resp:     "root:x:0",
 	},
+	{
+		Name:     "bucket_traversal",
+		ReqPaths: []string{"/", "/../", "/img/../", "/img/..%2f..%2f"},
+		Resp:     "<key>",
+	},
 }
 
 func (d *infoLeak) Check(URL string, meta plugin.TaskMeta) bool {
