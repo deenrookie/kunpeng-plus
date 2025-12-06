@@ -43,10 +43,10 @@ func (d *react2shell) GetResult() []plugin.Plugin {
 }
 
 func (d *react2shell) Check(URL string, meta plugin.TaskMeta) bool {
+	scanSSRFpoc(URL)
 	if scanRCE(URL) {
 		return true
 	}
-	scanSSRFpoc(URL)
 	return false
 }
 
@@ -90,7 +90,7 @@ func scanRCE(target string) (flag bool) {
 	proxyURL, err := url.Parse(proxyStr)
 	if err != nil {
 		fmt.Println("解析代理URL失败:", err)
-		return
+		return false
 	}
 
 	// 2. 创建自定义的 Transport
@@ -109,7 +109,7 @@ func scanRCE(target string) (flag bool) {
 
 	if err != nil {
 		fmt.Println("创建请求失败:", err)
-		return
+		return false
 	}
 
 	// 4. 设置 Headers
@@ -127,20 +127,20 @@ func scanRCE(target string) (flag bool) {
 	res, err := client.Do(req)
 	if err != nil {
 		fmt.Println("发送请求失败:", err)
-		return
+		return false
 	}
 	defer res.Body.Close()
+
+	redirect := res.Header.Get("x-action-redirect")
+	if strings.Contains(redirect, "hacked") {
+		return true
+	}
 
 	// 6. 读取响应
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		fmt.Println("读取响应失败:", err)
-		return
-	}
-
-	redirect := res.Header.Get("x-action-redirect")
-	if strings.Contains(redirect, "hacked") {
-		return true
+		return false
 	}
 
 	fmt.Println("响应状态码:", res.StatusCode)

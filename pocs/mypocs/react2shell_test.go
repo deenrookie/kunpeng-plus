@@ -4,4 +4,5 @@ import "testing"
 
 func TestScan(t *testing.T) {
 	scanRCE("http://192.168.31.95:3000")
+	scanSSRFpoc("http://192.168.31.95:3000")
 }
