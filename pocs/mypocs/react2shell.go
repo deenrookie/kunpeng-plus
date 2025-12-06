@@ -43,6 +43,23 @@ func (d *react2shell) GetResult() []plugin.Plugin {
 }
 
 func (d *react2shell) Check(URL string, meta plugin.TaskMeta) bool {
+	u, err := url.Parse(URL)
+	if err != nil {
+		fmt.Printf("解析 URL 失败: %v\n", err)
+		return false
+	}
+
+	// 2. 获取 Pathname
+	pathname := u.Path
+	if pathname == "" {
+		URL = URL + "/_next"
+	}
+
+	if pathname == "/" {
+		URL = URL + "_next"
+	}
+	
+	fmt.Println(URL)
 	scanSSRFpoc(URL)
 	if scanRCE(URL) {
 		result := d.info
