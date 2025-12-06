@@ -45,6 +45,11 @@ func (d *react2shell) GetResult() []plugin.Plugin {
 func (d *react2shell) Check(URL string, meta plugin.TaskMeta) bool {
 	scanSSRFpoc(URL)
 	if scanRCE(URL) {
+		result := d.info
+		result.Response = ""
+		result.Request = URL
+		result.Name = "react2shell"
+		d.result = append(d.result, result)
 		return true
 	}
 	return false
