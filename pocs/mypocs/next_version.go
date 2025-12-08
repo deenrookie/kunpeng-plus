@@ -100,6 +100,7 @@ func (d *nextVersion) Check(URL string, meta plugin.TaskMeta) bool {
 	// 2. 检查 HTML 源码中的 __NEXT_DATA__
 	if strings.Contains(bodyString, "__NEXT_DATA__") || strings.Contains(bodyString, "/_next/static/") {
 		isNext = true
+		detectedInfo = append(detectedInfo, "Header: "+poweredBy)
 	}
 
 	if isNext {

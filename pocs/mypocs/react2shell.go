@@ -58,7 +58,7 @@ func (d *react2shell) Check(URL string, meta plugin.TaskMeta) bool {
 	if pathname == "/" {
 		URL = URL + "_next"
 	}
-	
+
 	fmt.Println(URL)
 	scanSSRFpoc(URL)
 	if scanRCE(URL) {
@@ -106,7 +106,7 @@ func scanRCE(target string) (flag bool) {
 	// --- 结束 Boundary ---
 	payload.WriteString("--" + boundary + "--\r\n")
 
-	proxyStr := "http://127.0.0.1:8081"
+	proxyStr := "http://127.0.0.1:8080"
 	// 例如: "http://127.0.0.1:8080" 或 "http://user:pass@192.168.1.100:8888"
 
 	proxyURL, err := url.Parse(proxyStr)
@@ -124,8 +124,8 @@ func scanRCE(target string) (flag bool) {
 	_ = transport
 	// 3. 创建请求
 	client := &http.Client{
-		//Transport: transport,
-		Timeout: 5 * time.Second,
+		Transport: transport,
+		Timeout:   5 * time.Second,
 	}
 	req, err := http.NewRequest(method, target, payload)
 
